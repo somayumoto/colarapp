@@ -10,6 +10,27 @@
 
 対応OSはiOS／iPadOS 18以降。シミュレーターでは色見本から開始します。実機でも右上の「色見本」でカメラを使わずに見え方を試せます。
 
+## App Store用アイコンとアーカイブ
+
+`Assets.xcassets/AppIcon.appiconset` に、iPhone・iPad・App Store用のアイコンを収録しています。画像はアルファチャンネルのないRGB PNGです。`ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon` により、Xcodeが `CFBundleIcons` と `CFBundleIcons~ipad` の `CFBundlePrimaryIcon/CFBundleIconName` をInfo.plistへ自動で追加します。[Appleのアプリアイコン設定](https://developer.apple.com/documentation/xcode/configuring-your-app-icon-using-an-asset-catalog)
+
+アイコン修正版のビルド番号は **1.0 (2)** です。コード更新後にXcodeで **Product → Archive** を実行し直し、Organizerでビルド番号が「2」の新しいアーカイブを選んでアップロードしてください。以前作ったアーカイブには変更が反映されません。
+
+実機向けのArchive（署名なし）を作成し、内部のiPhone用120×120・iPad用152×152のPNGと、両端末向けの `CFBundleIconName = AppIcon` を検証しています。
+
+アイコン画像を再生成する場合は、Macで次を実行します。
+
+```sh
+xcrun swift Design/generate-app-icons.swift
+```
+
+ソース画像と、ビルド済みアプリ／アーカイブ内のアイコンを確認できます。
+
+```sh
+python3 Tests/validate-app-icons.py
+python3 Tests/validate-app-icons.py /path/to/色々変え.xcarchive
+```
+
 ## 操作
 
 - **色の変え方**：赤を青に・青を保持／赤の強さを青に／赤い部分を強調／変換なし。初期設定は「赤を青に・青を保持」です。
