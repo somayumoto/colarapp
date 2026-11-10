@@ -4,7 +4,7 @@ import UIKit
 struct ContentView: View {
     @StateObject private var camera = CameraCapture()
     @Environment(\.scenePhase) private var scenePhase
-    @AppStorage("colorMode") private var modeID = ColorMode.redAsBlue.rawValue
+    @AppStorage("colorMode") private var modeID = ColorMode.redToBlue.rawValue
     @AppStorage("conversionIntensity") private var intensity = 1.0
     @AppStorage("captureResolution") private var resolutionID = CaptureResolution.hd.rawValue
     @AppStorage("captureFrameRate") private var frameRate = 30
@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var rendererGeneration = 0
 
     private let accent = Color(red: 0.16, green: 0.36, blue: 0.85)
-    private var mode: ColorMode { ColorMode(rawValue: modeID) ?? .redAsBlue }
+    private var mode: ColorMode { ColorMode(rawValue: modeID) ?? .redToBlue }
     private var resolution: CaptureResolution { CaptureResolution(rawValue: resolutionID) ?? .hd }
     private var requestedSettings: CaptureSettings {
         CaptureSettings(resolution: resolution, frameRate: frameRate)

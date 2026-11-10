@@ -53,7 +53,7 @@ struct CameraMetalView: UIViewRepresentable {
         private var dummyChroma: (any MTLTexture)?
         private var redraw: DrawRequest?
         private let capacity = GPUCapacity()
-        private var mode: ColorMode = .redAsBlue
+        private var mode: ColorMode = .redToBlue
         private var intensity: Float = 1
         private var demo = false
         private var fill = true

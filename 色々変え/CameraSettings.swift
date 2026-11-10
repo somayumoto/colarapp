@@ -1,8 +1,8 @@
 import Foundation
 
 nonisolated enum ColorMode: Int, CaseIterable, Identifiable, Sendable {
+    case redToBlue = 1
     case redAsBlue = 0
-    case swapRedBlue = 1
     case highlightRed = 2
     case original = 3
 
@@ -11,7 +11,7 @@ nonisolated enum ColorMode: Int, CaseIterable, Identifiable, Sendable {
     var title: String {
         switch self {
         case .redAsBlue: "赤の強さを青に"
-        case .swapRedBlue: "赤と青を交換"
+        case .redToBlue: "赤を青に・青を保持"
         case .highlightRed: "赤い部分を強調"
         case .original: "変換なし"
         }
@@ -20,7 +20,7 @@ nonisolated enum ColorMode: Int, CaseIterable, Identifiable, Sendable {
     var detail: String {
         switch self {
         case .redAsBlue: "R成分を青の濃淡で表示します。白や黄色も青くなります。"
-        case .swapRedBlue: "RとBを入れ替えます。白と灰色は保たれます。"
+        case .redToBlue: "赤を青に加え、元の青と緑を残します。重なる青は上限まで加算します。"
         case .highlightRed: "無彩色の映像で、赤が優勢な部分を青く強調します。"
         case .original: "上下とも元の映像を表示します。"
         }
@@ -29,7 +29,7 @@ nonisolated enum ColorMode: Int, CaseIterable, Identifiable, Sendable {
     var symbol: String {
         switch self {
         case .redAsBlue: "drop.fill"
-        case .swapRedBlue: "arrow.left.arrow.right"
+        case .redToBlue: "arrow.right"
         case .highlightRed: "viewfinder"
         case .original: "circle.lefthalf.filled"
         }

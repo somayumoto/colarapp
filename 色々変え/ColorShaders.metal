@@ -45,7 +45,8 @@ inline float2 nativeUV(float2 uv, int quarterTurns) {
 inline float3 mappedColor(float3 rgb, int mode) {
     switch (mode) {
         case 0: return float3(0, 0, rgb.r);
-        case 1: return rgb.bgr;
+        // Move red into blue while retaining the original blue and green.
+        case 1: return float3(0, rgb.g, min(1.0f, rgb.b + rgb.r));
         case 2: {
             float gray = dot(rgb, float3(0.2126, 0.7152, 0.0722));
             float redDominance = max(0.0f, rgb.r - max(rgb.g, rgb.b));

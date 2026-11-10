@@ -24,7 +24,7 @@ final class CameraUITests: XCTestCase {
         app.sliders["intensitySlider"].adjust(toNormalizedSliderPosition: 1)
         let descriptions = [
             ("赤の強さを青に", "R成分を青の濃淡で表示します。白や黄色も青くなります。"),
-            ("赤と青を交換", "RとBを入れ替えます。白と灰色は保たれます。"),
+            ("赤を青に・青を保持", "赤を青に加え、元の青と緑を残します。重なる青は上限まで加算します。"),
             ("赤い部分を強調", "無彩色の映像で、赤が優勢な部分を青く強調します。"),
             ("変換なし", "上下とも元の映像を表示します。")
         ]
@@ -35,7 +35,7 @@ final class CameraUITests: XCTestCase {
             screenshot(title)
         }
 
-        select("colorModePicker", option: "赤と青を交換")
+        select("colorModePicker", option: "赤を青に・青を保持")
         let slider = app.sliders["intensitySlider"]
         slider.adjust(toNormalizedSliderPosition: 0.35)
         let savedStrength = slider.value as? String

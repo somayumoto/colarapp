@@ -62,7 +62,7 @@ for mode in 0...3 {
             let mapped: SIMD3<Float>
             switch mode {
             case 0: mapped = SIMD3(0,0,original.x)
-            case 1: mapped = SIMD3(original.z,original.y,original.x)
+            case 1: mapped = SIMD3(0,original.y,min(1,original.x+original.z))
             case 2:
                 let gray = original.x*0.2126+original.y*0.7152+original.z*0.0722
                 let dominance = max(0,original.x-max(original.y,original.z))
@@ -71,6 +71,34 @@ for mode in 0...3 {
             }
             expect(rgb(output,i*16+8,16), original*(1-strength)+mapped*strength, "mode\(mode) strength\(strength) swatch\(i)")
             expect(rgb(output,i*16+8,48), original, "bottom unchanged mode\(mode) strength\(strength) swatch\(i)")
+        }
+    }
+}
+// Regression fixtures exercise red-to-blue through the real camera sampling path.
+// Explicit expected colors distinguish it from both channel swapping and R-only blue.
+let redToBlueFixtures: [(String, SIMD3<Float>, SIMD3<Float>)] = [
+    ("blue stays blue", SIMD3(0,0,1), SIMD3(0,0,1)),
+    ("red becomes blue", SIMD3(1,0,0), SIMD3(0,0,1)),
+    ("green stays green", SIMD3(0,1,0), SIMD3(0,1,0)),
+    ("red and blue add below the limit", SIMD3(0.2,0.3,0.4), SIMD3(0,0.3,0.6)),
+    ("red and blue clamp at the limit", SIMD3(0.75,0.25,0.75), SIMD3(0,0.25,1)),
+    ("white becomes cyan", SIMD3(1,1,1), SIMD3(0,1,1))
+]
+for (name, original, converted) in redToBlueFixtures {
+    let y = original.x*0.2126 + original.y*0.7152 + original.z*0.0722
+    let cb = (original.z-y)/1.8556
+    let cr = (original.x-y)/1.5748
+    func byte(_ value: Float) -> UInt8 { UInt8(min(255,max(0,value.rounded()))) }
+    let luma = texture(.r8Unorm,bytes:[byte(y*255)])
+    let chroma = texture(.rg8Unorm,bytes:[byte(128+cb*255),byte(128+cr*255)])
+    for strength: Float in [0,0.5,1] {
+        var u = U(); u.flags = SIMD4(1,0,0,1); u.parameters.x = strength
+        let output = render(u,y:luma,c:chroma)
+        expect(rgb(output,56,16),original*(1-strength)+converted*strength,"red-to-blue \(name), strength\(strength)",tolerance:0.025)
+        expect(rgb(output,56,48),original,"red-to-blue original panel \(name), strength\(strength)",tolerance:0.025)
+        for row in [16,48] {
+            guard output[(row*112+56)*4+3] == 255 else { fatalError("red-to-blue preview must stay opaque: \(name)") }
+            checks += 1
         }
     }
 }
